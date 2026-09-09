@@ -1,0 +1,28 @@
+rules:
+  - id: "RULE_CHURN_PREVENTION"
+    issue_code: "CHURN_RISK_HIGH"
+    condition: "customer_risk.risk_score >= 70"
+    priority: "URGENT"
+    action_template: "Initiate executive outreach and review recent service issues. Offer targeted renewal incentive."
+    impact_template: "Protect ${revenue_at_risk} in annual revenue"
+
+  - id: "RULE_ANOMALY_SALES_DROP"
+    issue_code: "ANOMALY_ORDER_DROP"
+    condition: "anomaly_output.severity in ['HIGH', 'CRITICAL'] and anomaly_output.anomaly_type == 'DROP'"
+    priority: "HIGH"
+    action_template: "Contact account manager to check for inventory stockouts, pricing friction, or supplier switching."
+    impact_template: "Recover estimated monthly deficit of ${deviation}"
+
+  - id: "RULE_NEXT_PURCHASE_OVERDUE"
+    issue_code: "OVERDUE_REORDER"
+    condition: "next_purchase_prediction.days_until_next_purchase < 0 and customer_risk.risk_score < 50"
+    priority: "MEDIUM"
+    action_template: "Send automated restocking reminder or special purchase order discount for favorite SKUs."
+    impact_template: "Capture expected order value of ${expected_purchase_value}"
+
+  - id: "RULE_CROSS_SELL_READY"
+    issue_code: "CROSS_SELL_OPPORTUNITY"
+    condition: "sales_opportunity.win_probability >= 0.70 and sales_opportunity.potential_revenue >= 5000"
+    priority: "HIGH"
+    action_template: "Schedule product specialist demo for recommended expansion category."
+    impact_template: "Expand account ARR by ${potential_revenue} (Expected: ${expected_value})"

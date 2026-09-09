@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InsightEdge — Sales Decision Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --border-main: #e2e8f0;
+      --border-subtle: #cbd5e1;
+      
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #64748b;
+      
+      --primary: #1d4ed8;
+      --primary-hover: #1e40af;
+      --primary-subtle: #eff6ff;
+      --primary-border: #bfdbfe;
+      
+      --success: #15803d;
+      --success-bg: #f0fdf4;
+      --success-border: #bbf7d0;
+      
+      --warning: #b45309;
+      --warning-bg: #fffbeb;
+      --warning-border: #fde68a;
+      
+      --danger: #b91c1c;
+      --danger-bg: #fef2f2;
+      --danger-border: #fecaca;
+
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* HEADER */
+    header {
+      background-color: var(--bg-surface);
+      border-bottom: 1px solid var(--border-main);
+      padding: 0.875rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      background: #0f172a;
+      border-radius: 6px;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+    }
+
+    .brand-meta {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    /* NAVIGATION BAR */
+    .nav-stepper {
+      display: inline-flex;
+      align-items: center;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-main);
+      border-radius: 8px;
+      padding: 3px;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 1rem;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.825rem;
+      font-weight: 500;
+      transition: all 0.15s ease-in-out;
+    }
+
+    .nav-btn .step-number {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      color: var(--text-muted);
+    }
+
+    .nav-btn.active {
+      background: var(--bg-surface);
+      color: var(--primary);
+      font-weight: 600;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-btn.active .step-number {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .nav-divider {
+      color: var(--text-light);
+      font-size: 0.75rem;
+      padding: 0 0.15rem;
+      user-select: none;
+    }
+
+    /* ACTION BUTTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.5rem 0.875rem;
+      border-radius: 6px;
+      font-size: 0.825rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-outline {
+      background: var(--bg-surface);
+      border-color: var(--border-main);
+      color: var(--text-muted);
+    }
+    .btn-outline:hover {
+      background: var(--bg-subtle);
+      color: var(--text-main);
+      border-color: var(--border-subtle);
+    }
+
+    .btn-sm {
+      padding: 0.3rem 0.6rem;
+      font-size: 0.75rem;
+    }
+
+    /* LAYOUT */
+    main {
+      flex: 1;
+      padding: 1.5rem 2rem 3rem 2rem;
+      max-width: 1480px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .tab-section {
+      display: none;
+    }
+    .tab-section.active {
+      display: block;
+    }
+
+    /* EXECUTIVE SUMMARY BANNER */
+    .summary-strip {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-left: 4px solid var(--primary);
+      border-radius: 8px;
+      padding: 0.875rem 1.25rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .summary-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.2rem;
+    }
+
+    .summary-desc {
+      font-size: 0.875rem;
+      color: #1e3a8a;
+      line-height: 1.45;
+    }
+
+    /* KPI CARDS */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .kpi-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-main);
+      border-radius: 8px;
+      padding: 1.1rem 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .kpi-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .kpi-value {
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-top: 0.35rem;
+      letter-spacing: -0.02em;
+    }
+
+    .kpi-subtext {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+      font-weight: 500;
+    }
+
+    .val-positive { color: var(--success); }
+    .val-negative { color: var(--danger); }
+    .val-warning { color: var(--warning); }
+    .val-primary { color: var(--primary); }
+
+    /* GRID LAYOUTS */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .grid-2-1 {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-2, .grid-2-1, .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-main);
+      border-radius: 8px;
+      padding: 1.25rem 1.4rem;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.25rem;
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .card-subtitle {
+      font-size: 0.78rem;
+      color: var(--text-light);
+      margin-top: 0.15rem;
+    }
+
+    /* DATA TABLES */
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.825rem;
+      text-align: left;
+    }
+
+    th {
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 0.65rem 0.875rem;
+      border-bottom: 1px solid var(--border-main);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 0.75rem 0.875rem;
+      border-bottom: 1px solid var(--border-main);
+      color: var(--text-main);
+    }
+
+    tbody tr:hover td {
+      background: #f8fafc;
+    }
+
+    /* STATUS PILLS & BADGES */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.725rem;
+      font-weight: 600;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .pill-neutral { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+    .pill-neutral .dot { background: #64748b; }
+
+    .pill-success { background: var(--success-bg); color: var(--success); border: 1px solid var(--success-border); }
+    .pill-success .dot { background: var(--success); }
+
+    .pill-warning { background: var(--warning-bg); color: var(--warning); border: 1px solid var(--warning-border); }
+    .pill-warning .dot { background: var(--warning); }
+
+    .pill-danger { background: var(--danger-bg); color: var(--danger); border: 1px solid var(--danger-border); }
+    .pill-danger .dot { background: var(--danger); }
+
+    .pill-primary { background: var(--primary-subtle); color: var(--primary); border: 1px solid var(--primary-border); }
+    .pill-primary .dot { background: var(--primary); }
+
+    .code-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      background: var(--bg-subtle);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--border-main);
+    }
+
+    /* SIMULATOR CARD */
+    .sim-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-main);
+      border-top: 3px solid var(--primary);
+      border-radius: 8px;
+      padding: 1.25rem 1.4rem;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.5rem;
+    }
+
+    .form-row {
+      margin-bottom: 1rem;
+    }
+
+    .form-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-main);
+      margin-bottom: 0.35rem;
+    }
+
+    .form-label span.highlight {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--primary);
+    }
+
+    /* ACTION ENGINE DRAWER */
+    .action-panel {
+      display: none;
+      background: #fafafa;
+      border: 1px solid var(--border-subtle);
+      border-left: 4px solid var(--primary);
+      border-radius: 8px;
+      padding: 1.25rem 1.4rem;
+      margin-top: 1rem;
+    }
+    .action-panel.active {
+      display: block;
+    }
+
+    /* MODAL */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(2px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-main);
+      border-radius: 8px;
+      max-width: 540px;
+      width: 90%;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-md);
+      position: relative;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: transparent;
+      border: none;
+      color: var(--text-light);
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+    .modal-close-btn:hover { color: var(--text-main); }
+
+    /* TOAST */
+    .toast-notice {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 0.75rem 1.2rem;
+      border-radius: 6px;
+      font-size: 0.825rem;
+      font-weight: 500;
+      display: none;
+      box-shadow: var(--shadow-md);
+      z-index: 2000;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid #e2e8f0;
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .api-error {
+      color: var(--danger);
+      font-size: 0.8rem;
+      padding: 0.5rem 0.75rem;
+      background: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand-group">
+      <div class="brand-mark">IE</div>
+      <div>
+        <div class="brand-name">InsightEdge Sales Intelligence</div>
+        <div class="brand-meta">Enterprise Decision Support Layer</div>
+      </div>
+    </div>
+
+    <!-- STEPPER NAVIGATION -->
+    <nav class="nav-stepper">
+      <button class="nav-btn active" onclick="switchStage('see')">
+        <span class="step-number">1</span>
+        <span>SEE</span>
+      </button>
+      <span class="nav-divider">/</span>
+      <button class="nav-btn" onclick="switchStage('predict')">
+        <span class="step-number">2</span>
+        <span>PREDICT</span>
+      </button>
+      <span class="nav-divider">/</span>
+      <button class="nav-btn" onclick="switchStage('decide')">
+        <span class="step-number">3</span>
+        <span>DECIDE</span>
+      </button>
+    </nav>
+
+    <div>
+      <button class="btn btn-outline btn-sm" onclick="syncWarehouse()">
+        <span id="syncIndicator">Sync Warehouse</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ================================================================= -->
+    <!-- STAGE 1: SEE (WHAT HAPPENED? - DESCRIPTIVE PERFORMANCE)           -->
+    <!-- ================================================================= -->
+    <div id="stage-see" class="tab-section active">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Sales (YTD)</div>
+          <div class="kpi-value">₹24.14 Cr</div>
+          <div class="kpi-subtext val-positive">+6.32% YoY Growth</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Current Month Sales (Aug)</div>
+          <div class="kpi-value">₹3.83 Cr</div>
+          <div class="kpi-subtext val-positive">+4.80% vs August Prior Year</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">YoY Variance</div>
+          <div class="kpi-value">+₹1.43 Cr</div>
+          <div class="kpi-subtext">Cumulative net expansion</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Best / Worst Month</div>
+          <div class="kpi-value" style="font-size: 1.25rem;">Jun (₹4.58 Cr) / Apr (₹3.22 Cr)</div>
+          <div class="kpi-subtext">FY 2024-25 Distribution</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Top Customer Share</div>
+          <div class="kpi-value">AER Stafford</div>
+          <div class="kpi-subtext">₹3.42 Cr (14.2% of total revenue)</div>
+        </div>
+      </div>
+
+      <div class="grid-2-1">
+        <!-- Trend Chart -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Monthly Historical Sales Trend</div>
+              <div class="card-subtitle">Actual revenue performance by fiscal month (INR Crores)</div>
+            </div>
+            <span class="pill pill-neutral"><span class="dot"></span>Actuals</span>
+          </div>
+          <div style="height: 270px;">
+            <canvas id="chartSeeTrend"></canvas>
+          </div>
+        </div>
+
+        <!-- Location Donut -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Location Contribution</div>
+              <div class="card-subtitle">Regional sales distribution (₹ Cr)</div>
+            </div>
+          </div>
+          <div style="height: 270px; position: relative;">
+            <canvas id="chartSeeLocation"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer Performance Table -->
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-title">Customer-Level Performance &amp; Ranking</div>
+            <div class="card-subtitle">Key accounts ordered by historical volume contribution</div>
+          </div>
+          <span class="pill pill-neutral">8 Monitored Accounts</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Customer Name</th>
+                <th>Region</th>
+                <th>Current Year Sales</th>
+                <th>Prior Year Sales</th>
+                <th>YoY Growth</th>
+                <th>Share of Sales</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>AER Stafford</strong></td>
+                <td>North (Delhi NCR)</td>
+                <td>₹3.42 Cr</td>
+                <td>₹3.10 Cr</td>
+                <td class="val-positive">+10.3%</td>
+                <td>14.2%</td>
+              </tr>
+              <tr>
+                <td><strong>ABC Industries</strong></td>
+                <td>West (Mumbai)</td>
+                <td>₹2.88 Cr</td>
+                <td>₹2.65 Cr</td>
+                <td class="val-positive">+8.7%</td>
+                <td>11.9%</td>
+              </tr>
+              <tr>
+                <td><strong>TM Automotive</strong></td>
+                <td>West (Pune)</td>
+                <td>₹2.45 Cr</td>
+                <td>₹2.80 Cr</td>
+                <td class="val-negative">-12.5%</td>
+                <td>10.1%</td>
+              </tr>
+              <tr>
+                <td><strong>XYZ Industries</strong></td>
+                <td>South (Bengaluru)</td>
+                <td>₹2.15 Cr</td>
+                <td>₹2.50 Cr</td>
+                <td class="val-negative">-14.0%</td>
+                <td>8.9%</td>
+              </tr>
+              <tr>
+                <td><strong>Apex Precision Engg</strong></td>
+                <td>West (Pune)</td>
+                <td>₹1.95 Cr</td>
+                <td>₹1.80 Cr</td>
+                <td class="val-positive">+8.3%</td>
+                <td>8.1%</td>
+              </tr>
+              <tr>
+                <td><strong>Sterling Heavy Metals</strong></td>
+                <td>North (Faridabad)</td>
+                <td>₹1.60 Cr</td>
+                <td>₹1.55 Cr</td>
+                <td class="val-positive">+3.2%</td>
+                <td>6.6%</td>
+              </tr>
+              <tr>
+                <td><strong>Nova Electro Systems</strong></td>
+                <td>South (Chennai)</td>
+                <td>₹1.48 Cr</td>
+                <td>₹1.35 Cr</td>
+                <td class="val-positive">+9.6%</td>
+                <td>6.1%</td>
+              </tr>
+              <tr>
+                <td><strong>Kalyan Dynamics</strong></td>
+                <td>East (Kolkata)</td>
+                <td>₹1.22 Cr</td>
+                <td>₹1.18 Cr</td>
+                <td class="val-positive">+3.4%</td>
+                <td>5.1%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ================================================================= -->
+    <!-- STAGE 2: PREDICT (WHAT IS LIKELY TO HAPPEN? - FORWARD SIGNALS)    -->
+    <!-- ================================================================= -->
+    <div id="stage-predict" class="tab-section">
+      
+      <!-- EXECUTIVE INSIGHT STRIP -->
+      <div class="summary-strip">
+        <div>
+          <div class="summary-title">Executive Forecast Summary</div>
+          <div class="summary-desc">
+            September revenue is projected at <strong>₹4.12 Cr</strong>, representing a <strong>₹38.0 Lakhs shortfall against the ₹4.50 Cr monthly target</strong>. 
+            The deficit is primarily driven by 5 key accounts showing progressive order frequency deceleration.
+          </div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="switchStage('decide')">View Action Plan</button>
+      </div>
+
+      <!-- PREDICT TOP KPIS -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Forecast Sales (Sep)</div>
+          <div class="kpi-value val-primary">₹4.12 Cr</div>
+          <div class="kpi-subtext">80% CI: ₹3.85 Cr – ₹4.39 Cr</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Target Achievement Prob</div>
+          <div class="kpi-value val-warning">68%</div>
+          <div class="kpi-subtext">Target: ₹4.50 Cr | Gap: ₹38.0 L</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Revenue at Risk</div>
+          <div class="kpi-value val-negative">₹78.0 L</div>
+          <div class="kpi-subtext">Across 14 vulnerable accounts</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Growth Opportunity</div>
+          <div class="kpi-value val-positive">₹62.0 L</div>
+          <div class="kpi-subtext">High-propensity expansion pool</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Accounts at Risk</div>
+          <div class="kpi-value val-negative">14</div>
+          <div class="kpi-subtext">Exhibiting anomalous cycle gaps</div>
+        </div>
+      </div>
+
+      <div class="grid-2-1">
+        <!-- Upgraded Forecast with Confidence Band -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Sales Trajectory: Actuals → 90-Day Forecast Band</div>
+              <div class="card-subtitle">Expected monthly revenue with 80% confidence interval (INR Crores)</div>
+            </div>
+            <span class="pill pill-primary"><span class="dot"></span>Prophet Engine</span>
+          </div>
+          <div style="height: 290px;">
+            <canvas id="chartPredictTrend"></canvas>
+          </div>
+        </div>
+
+        <!-- Regional Run-Rate Status -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Regional Forecast Run-Rate</div>
+              <div class="card-subtitle">Projected September variance by territory</div>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding: 0.65rem 0.85rem; background: var(--bg-subtle); border-radius: 6px;">
+              <div>
+                <strong style="font-size:0.85rem;">North (Delhi NCR)</strong>
+                <div style="font-size:0.75rem; color:var(--text-light);">Sep: ₹1.45 Cr (Target ₹1.40 Cr)</div>
+              </div>
+              <span class="pill pill-success"><span class="dot"></span>Growing (+3.5%)</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding: 0.65rem 0.85rem; background: var(--bg-subtle); border-radius: 6px;">
+              <div>
+                <strong style="font-size:0.85rem;">West (Mumbai / Pune)</strong>
+                <div style="font-size:0.75rem; color:var(--text-light);">Sep: ₹1.68 Cr (Target ₹1.95 Cr)</div>
+              </div>
+              <span class="pill pill-danger"><span class="dot"></span>Declining (-13.8%)</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding: 0.65rem 0.85rem; background: var(--bg-subtle); border-radius: 6px;">
+              <div>
+                <strong style="font-size:0.85rem;">South (Bengaluru / Chennai)</strong>
+                <div style="font-size:0.75rem; color:var(--text-light);">Sep: ₹0.72 Cr (Target ₹0.75 Cr)</div>
+              </div>
+              <span class="pill pill-warning"><span class="dot"></span>Stable (-4.0%)</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding: 0.65rem 0.85rem; background: var(--bg-subtle); border-radius: 6px;">
+              <div>
+                <strong style="font-size:0.85rem;">East (Kolkata)</strong>
+                <div style="font-size:0.75rem; color:var(--text-light);">Sep: ₹0.27 Cr (Target ₹0.25 Cr)</div>
+              </div>
+              <span class="pill pill-success"><span class="dot"></span>Growing (+8.0%)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STATISTICAL ANOMALIES -->
+      <div class="card" style="border-left: 3px solid var(--warning);">
+        <div class="card-head">
+          <div>
+            <div class="card-title">Statistical Anomalies (Rolling 30-Day Z-Score)</div>
+            <div class="card-subtitle">Automated exception monitoring across customers, regions, and product categories</div>
+          </div>
+          <span class="pill pill-warning" id="anomalyCount">Loading…</span>
+        </div>
+        <div id="anomalyGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.875rem;">
+          <div style="padding:1.5rem; text-align:center; color:var(--text-light);">
+            <span class="loading-spinner"></span> Loading anomalies…
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Customer Risk Matrix -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Customer Risk Assessment (XGBoost + SHAP)</div>
+              <div class="card-subtitle">Attrition probability and revenue exposure with attribution factors</div>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Customer</th>
+                  <th>Risk Score</th>
+                  <th>Status</th>
+                  <th>Revenue Exposure</th>
+                  <th>Attribution</th>
+                </tr>
+              </thead>
+              <tbody id="riskTableBody">
+                <tr><td colspan="5" style="text-align:center; color:var(--text-light); padding:1.5rem;">
+                  <span class="loading-spinner"></span> Loading risk data…
+                </td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Next Purchase Predictions -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Next Purchase Cycle Projections</div>
+              <div class="card-subtitle">Expected order timing based on inter-purchase interval modeling</div>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Customer</th>
+                  <th>Last Order</th>
+                  <th>Expected Next Window</th>
+                  <th>Expected Value</th>
+                  <th>Confidence</th>
+                </tr>
+              </thead>
+              <tbody id="nextPurchaseTableBody">
+                <tr><td colspan="5" style="text-align:center; color:var(--text-light); padding:1.5rem;">
+                  <span class="loading-spinner"></span> Loading purchase predictions…
+                </td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ================================================================= -->
+    <!-- STAGE 3: DECIDE (WHAT SHOULD I DO? - PRESCRIPTIVE ACTION CENTRE)  -->
+    <!-- ================================================================= -->
+    <div id="stage-decide" class="tab-section">
+      
+      <!-- DECIDE TOP KPIS -->
+      <div class="kpi-grid">
+        <div class="kpi-card" style="border-top: 3px solid var(--success);">
+          <div class="kpi-label">Recoverable Revenue</div>
+          <div class="kpi-value val-positive">₹31.5 Lakhs</div>
+          <div class="kpi-subtext">Identified across 8 priority accounts</div>
+        </div>
+        <div class="kpi-card" style="border-top: 3px solid var(--primary);">
+          <div class="kpi-label">Growth Opportunity</div>
+          <div class="kpi-value val-primary">₹26.2 Lakhs</div>
+          <div class="kpi-subtext">5 Cross-sell &amp; expansion items</div>
+        </div>
+        <div class="kpi-card" style="border-top: 3px solid var(--danger);">
+          <div class="kpi-label">Critical Actions Queue</div>
+          <div class="kpi-value val-negative">8 Actions</div>
+          <div class="kpi-subtext">3 Require immediate outreach</div>
+        </div>
+        <div class="kpi-card" style="border-top: 3px solid var(--primary);">
+          <div class="kpi-label">Target Probability Uplift</div>
+          <div class="kpi-value">68% → 87%</div>
+          <div class="kpi-subtext">If top 4 actions executed</div>
+        </div>
+      </div>
+
+      <!-- TARGET GAP WHAT-IF SIMULATOR -->
+      <div class="sim-panel">
+        <div class="card-head">
+          <div>
+            <div class="card-title">Target Gap &amp; What-If Scenario Simulator</div>
+            <div class="card-subtitle">Evaluate intervention levers to close the ₹38.0 Lakhs forecast gap</div>
+          </div>
+          <span class="pill pill-neutral">Interactive Planning Model</span>
+        </div>
+
+        <div class="grid-2-1">
+          <div>
+            <div class="grid-3" style="margin-bottom: 1rem;">
+              <div style="background: var(--bg-subtle); padding: 0.875rem; border-radius: 6px; border: 1px solid var(--border-main);">
+                <div style="font-size:0.75rem; color:var(--text-light); text-transform:uppercase; font-weight:600;">Current Forecast</div>
+                <div style="font-size:1.35rem; font-weight:700; margin-top:0.2rem;">₹4.62 Cr</div>
+              </div>
+              <div style="background: var(--bg-subtle); padding: 0.875rem; border-radius: 6px; border: 1px solid var(--border-main);">
+                <div style="font-size:0.75rem; color:var(--text-light); text-transform:uppercase; font-weight:600;">Monthly Target</div>
+                <div style="font-size:1.35rem; font-weight:700; color:var(--warning); margin-top:0.2rem;">₹5.00 Cr</div>
+              </div>
+              <div style="background: var(--bg-subtle); padding: 0.875rem; border-radius: 6px; border: 1px solid var(--border-main);">
+                <div style="font-size:0.75rem; color:var(--text-light); text-transform:uppercase; font-weight:600;">Forecast Shortfall</div>
+                <div style="font-size:1.35rem; font-weight:700; color:var(--danger); margin-top:0.2rem;">₹38.0 Lakhs</div>
+              </div>
+            </div>
+
+            <div>
+              <div class="form-row">
+                <div class="form-label">
+                  <span>Lever 1: Recover Declining Accounts (XYZ, TM Auto, Sterling)</span>
+                  <span class="highlight" id="lblRecUplift">+₹17.0 Lakhs</span>
+                </div>
+                <input type="range" id="rngRecUplift" min="0" max="30" value="17" step="1" oninput="calculateSimulator()">
+              </div>
+              <div class="form-row">
+                <div class="form-label">
+                  <span>Lever 2: Cross-Sell / Upsell Top 10 Accounts</span>
+                  <span class="highlight" id="lblUpsellVal">+₹14.0 Lakhs</span>
+                </div>
+                <input type="range" id="rngUpsell" min="0" max="25" value="14" step="1" oninput="calculateSimulator()">
+              </div>
+              <div class="form-row" style="margin-bottom:0;">
+                <div class="form-label">
+                  <span>Lever 3: Pune / Unit-2 Run-Rate Recovery</span>
+                  <span class="highlight" id="lblUnitVal">+₹9.0 Lakhs</span>
+                </div>
+                <input type="range" id="rngUnit" min="0" max="20" value="9" step="1" oninput="calculateSimulator()">
+              </div>
+            </div>
+          </div>
+
+          <!-- Simulation Result Box -->
+          <div style="background: var(--bg-subtle); border: 1px solid var(--border-main); border-radius: 6px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="font-size:0.75rem; font-weight:700; color:var(--text-light); text-transform:uppercase; letter-spacing:0.04em;">Scenario Outcome</div>
+              <div style="margin-top:0.75rem;">
+                <div style="font-size:0.78rem; color:var(--text-muted);">Revised Forecast</div>
+                <div style="font-size:1.85rem; font-weight:700; color:var(--success);" id="simRevisedVal">₹5.02 Cr</div>
+              </div>
+              <div style="margin-top:0.5rem;">
+                <div style="font-size:0.78rem; color:var(--text-muted);">Target Achievement Probability</div>
+                <div style="font-size:1.35rem; font-weight:700; color:var(--primary);" id="simProbVal">68% → 87%</div>
+              </div>
+            </div>
+            <div style="margin-top:1rem;">
+              <div id="simStatusBox" class="pill pill-success" style="width:100%; justify-content:center; padding:0.5rem;">Target Fully Achieved (+₹2.0L Surplus)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECOMMENDED ACTIONS TABLE -->
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-title">Recommended Interventions &amp; Action Queue</div>
+            <div class="card-subtitle">Prioritized interventions evaluated against business rules to recover at-risk revenue</div>
+          </div>
+          <span class="pill pill-success">₹31.5L Recoverable Potential</span>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Customer Name</th>
+                <th>Issue / Trigger</th>
+                <th>Priority</th>
+                <th>Prescribed Action</th>
+                <th>Expected Impact</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="actionQueueBody">
+              <tr><td colspan="6" style="text-align:center; color:var(--text-light); padding:1.5rem;">
+                <span class="loading-spinner"></span> Loading recommendations…
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CUSTOMER ACTION ENGINE DRAWER -->
+      <div id="actionPanel" class="action-panel">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 1rem;">
+          <div>
+            <div style="display:flex; align-items:center; gap: 0.6rem;">
+              <span style="font-size: 1.15rem; font-weight: 700; color: var(--text-main);" id="actCustName">TM Automotive</span>
+              <span class="pill pill-danger" id="actRiskBadge">High Risk</span>
+            </div>
+            <div style="font-size:0.78rem; color:var(--text-light); margin-top:2px;">Prescriptive Intervention Summary</div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('actionPanel').classList.remove('active')">Close Panel</button>
+        </div>
+
+        <div class="grid-2-1">
+          <div>
+            <div style="background: var(--bg-surface); border: 1px solid var(--border-main); padding: 1rem; border-radius: 6px; margin-bottom: 0.75rem;">
+              <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:0.35rem;">Current Diagnostic</div>
+              <div style="font-size:0.85rem; line-height:1.5; color:var(--text-main);" id="actSituation">
+                Monthly volume down 24%, Order frequency down 31%, Last purchase 39 days ago vs 24d baseline interval
+              </div>
+            </div>
+
+            <div style="background: var(--bg-surface); border: 1px solid var(--border-main); padding: 1rem; border-radius: 6px;">
+              <div style="font-size:0.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; margin-bottom:0.35rem;">Prescribed Action</div>
+              <div style="font-size:0.85rem; line-height:1.5; color:var(--text-main);" id="actRecommendation">
+                Contact customer within 3 business days. Focus discussion on SKUs 1104 and 1218 where volume declined most. Historical recovery probability after intervention: <strong>64%</strong>.
+              </div>
+            </div>
+          </div>
+
+          <div style="background: var(--bg-surface); border: 1px solid var(--border-main); padding: 1rem; border-radius: 6px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="font-size:0.75rem; font-weight:600; color:var(--text-light); text-transform:uppercase;">Revenue at Stake</div>
+              <div style="font-size:1.6rem; font-weight:700; color:var(--danger); margin-top:0.2rem;" id="actRevenueAtRisk">₹12.2 Lakhs</div>
+              <div style="font-size:0.78rem; color:var(--text-muted); margin-top:0.4rem;">Historical Recovery Rate: <strong style="color:var(--success);" id="actSuccessRate">64%</strong></div>
+            </div>
+
+            <!-- WORKFLOW BUTTONS -->
+            <div style="display:flex; flex-direction:column; gap:0.5rem; margin-top:1.25rem;">
+              <button class="btn btn-primary" onclick="notifyToast('Assigned to Account Executive (Farhan K.) with 48h SLA')">
+                Assign to Account Manager
+              </button>
+              <button class="btn btn-outline" onclick="notifyToast('Follow-up task scheduled in CRM for 14 Sep')">
+                Schedule Follow-up Task
+              </button>
+              <button class="btn btn-outline" onclick="notifyToast('Intervention status marked as Reviewed & Active')">
+                Mark Reviewed
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- MODAL: ATTRIBUTION EXPLANATION (SHAP) -->
+  <div id="attributionModal" class="modal-backdrop">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="closeAttributionModal()">✕</button>
+      <div style="margin-bottom: 0.875rem;">
+        <span class="pill pill-danger" id="mRiskPill">82% Risk</span>
+        <h3 id="mTitle" style="font-size:1.05rem; font-weight:700; margin-top:0.35rem;">Customer Risk Attribution</h3>
+        <div style="font-size:0.78rem; color:var(--text-light);">SHAP Feature Attribution (XGBoost Classifier v1.0)</div>
+      </div>
+
+      <div style="background: var(--bg-subtle); border: 1px solid var(--border-main); border-radius: 6px; padding: 1rem; margin-bottom: 1.25rem;">
+        <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:0.4rem;">Primary Risk Drivers:</div>
+        <div id="mFactors" style="font-size:0.825rem; line-height:1.6; color:var(--text-main);"></div>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end;">
+        <button class="btn btn-primary btn-sm" onclick="closeAttributionModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="toast-notice">Action logged successfully</div>
+
+  <script>
+    // =========================================================================
+    // STATE
+    // =========================================================================
+    let chartSeeTrendInstance = null;
+    let chartSeeLocInstance = null;
+    let chartPredictTrendInstance = null;
+
+    // Cache so tab switches don't re-fetch
+    let _riskData = null;
+    let _anomalyData = null;
+    let _nextPurchaseData = null;
+    let _recommendationsData = null;
+
+    // =========================================================================
+    // UTILITY HELPERS
+    // =========================================================================
+    function fmt(val, d = 2) { return (val == null || isNaN(val)) ? 'N/A' : parseFloat(val).toFixed(d); }
+    function fmtLakhs(val) { return (val == null || isNaN(val)) ? '₹—' : '₹' + fmt(val / 1000, 1) + ' L'; }
+    function riskValClass(s) { return s >= 70 ? 'val-negative' : s >= 40 ? 'val-warning' : 'val-positive'; }
+    function riskLabel(l) { return { CRITICAL:'Critical', HIGH:'High Risk', MEDIUM:'Moderate', LOW:'Healthy' }[String(l).toUpperCase()] || l; }
+    function riskPillClass(l) { return { CRITICAL:'pill-danger', HIGH:'pill-danger', MEDIUM:'pill-warning', LOW:'pill-success' }[String(l).toUpperCase()] || 'pill-neutral'; }
+    function confidencePill(s) { const p=Math.round(s*100); const c=p>=70?'pill-success':p>=45?'pill-warning':'pill-danger'; return `<span class="pill ${c}">${p}%</span>`; }
+    function priorityPill(p) { const u=(p||'').toUpperCase(); const c=u==='URGENT'||u==='HIGH'?'pill-danger':u==='MEDIUM'?'pill-warning':'pill-neutral'; return `<span class="pill ${c}">${u}</span>`; }
+    function issuePill(code) { if(!code) return '<span class="pill pill-neutral">—</span>'; const c=code.includes('RISK')||code.includes('DROP')||code.includes('ANOMALY')?'pill-danger':code.includes('CROSS')||code.includes('OPP')?'pill-primary':code.includes('OVERDUE')?'pill-warning':'pill-neutral'; return `<span class="pill ${c}"><span class="dot"></span>${code.replace(/_/g,' ')}</span>`; }
+    function anomalyColor(type,sev) { if(type==='SPIKE') return 'var(--success)'; if(sev==='CRITICAL'||sev==='HIGH') return 'var(--danger)'; return 'var(--warning)'; }
+    function formatDate(s) { try { return new Date(s).toLocaleDateString('en-IN',{day:'numeric',month:'short'}); } catch{ return s||'—'; } }
+    function showTableError(id, cols, msg) { const el=document.getElementById(id); if(el) el.innerHTML=`<tr><td colspan="${cols}" class="api-error" style="padding:1rem;">${msg}</td></tr>`; }
+
+    // =========================================================================
+    // API FETCH WRAPPER
+    // =========================================================================
+    async function apiFetch(url) {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status} — ${url}`);
+      return res.json();
+    }
+
+    // =========================================================================
+    // STAGE NAVIGATION
+    // =========================================================================
+    function switchStage(stageName) {
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
+
+      if (stageName === 'see') {
+        document.querySelectorAll('.nav-btn')[0].classList.add('active');
+        document.getElementById('stage-see').classList.add('active');
+        renderSeeCharts();
+      } else if (stageName === 'predict') {
+        document.querySelectorAll('.nav-btn')[1].classList.add('active');
+        document.getElementById('stage-predict').classList.add('active');
+        renderPredictCharts();
+        loadRiskData();
+        loadAnomalyData();
+        loadNextPurchaseData();
+      } else if (stageName === 'decide') {
+        document.querySelectorAll('.nav-btn')[2].classList.add('active');
+        document.getElementById('stage-decide').classList.add('active');
+        loadRecommendationsData();
+        calculateSimulator();
+      }
+    }
+
+    // SEE STAGE CHARTS
+    function renderSeeCharts() {
+      // Historical trend
+      const ctxTrend = document.getElementById('chartSeeTrend')?.getContext('2d');
+      if (ctxTrend) {
+        if (chartSeeTrendInstance) chartSeeTrendInstance.destroy();
+        chartSeeTrendInstance = new Chart(ctxTrend, {
+          type: 'line',
+          data: {
+            labels: ['Apr', 'May', 'Jun', 'Jul', 'Aug'],
+            datasets: [
+              {
+                label: 'FY 2024-25 Actual (₹ Cr)',
+                data: [3.22, 4.04, 4.58, 4.52, 3.83],
+                borderColor: '#1d4ed8',
+                backgroundColor: 'rgba(29, 78, 216, 0.08)',
+                borderWidth: 2.5,
+                fill: true,
+                tension: 0.25,
+                pointRadius: 4,
+                pointBackgroundColor: '#1d4ed8'
+              },
+              {
+                label: 'FY 2023-24 Prior Year (₹ Cr)',
+                data: [3.05, 3.80, 4.30, 4.25, 3.65],
+                borderColor: '#94a3b8',
+                borderWidth: 1.5,
+                borderDash: [4, 4],
+                fill: false,
+                tension: 0.25,
+                pointRadius: 3
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { labels: { color: '#475569', font: { family: 'Inter', size: 12 } } }
+            },
+            scales: {
+              x: { grid: { color: '#f1f5f9' }, ticks: { color: '#64748b' } },
+              y: { 
+                grid: { color: '#e2e8f0' }, 
+                ticks: { color: '#64748b', callback: v => '₹' + v + ' Cr' } 
+              }
+            }
+          }
+        });
+      }
+
+      // Location breakdown
+      const ctxLoc = document.getElementById('chartSeeLocation')?.getContext('2d');
+      if (ctxLoc) {
+        if (chartSeeLocInstance) chartSeeLocInstance.destroy();
+        chartSeeLocInstance = new Chart(ctxLoc, {
+          type: 'doughnut',
+          data: {
+            labels: ['North (Delhi NCR)', 'West (Mumbai/Pune)', 'South (BLR/CHN)', 'East (Kolkata)'],
+            datasets: [{
+              data: [9.20, 9.85, 3.65, 1.44],
+              backgroundColor: ['#1d4ed8', '#475569', '#0891b2', '#15803d'],
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'bottom', labels: { color: '#475569', boxWidth: 12, font: { family: 'Inter', size: 11 } } }
+            },
+            cutout: '70%'
+          }
+        });
+      }
+    }
+
+    // PREDICT STAGE CHARTS
+    function renderPredictCharts() {
+      const ctx = document.getElementById('chartPredictTrend')?.getContext('2d');
+      if (!ctx) return;
+      if (chartPredictTrendInstance) chartPredictTrendInstance.destroy();
+
+      const labels = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep (F)', 'Oct (F)', 'Nov (F)'];
+      
+      chartPredictTrendInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Historical Actual (₹ Cr)',
+              data: [3.22, 4.04, 4.58, 4.52, 3.83, null, null, null],
+              borderColor: '#1d4ed8',
+              backgroundColor: '#1d4ed8',
+              borderWidth: 2.5,
+              tension: 0.25,
+              pointRadius: 4
+            },
+            {
+              label: 'Forecast Prediction (₹ Cr)',
+              data: [null, null, null, null, 3.83, 4.12, 4.37, 4.55],
+              borderColor: '#475569',
+              borderDash: [5, 5],
+              borderWidth: 2.5,
+              tension: 0.25,
+              pointRadius: 5,
+              pointBackgroundColor: '#475569'
+            },
+            {
+              label: 'Upper Confidence (80%)',
+              data: [null, null, null, null, 3.83, 4.39, 4.65, 4.88],
+              borderColor: 'transparent',
+              backgroundColor: 'rgba(71, 85, 105, 0.1)',
+              pointRadius: 0,
+              fill: '+1'
+            },
+            {
+              label: 'Lower Confidence (80%)',
+              data: [null, null, null, null, 3.83, 3.85, 4.09, 4.22],
+              borderColor: 'transparent',
+              pointRadius: 0,
+              fill: false
+            },
+            {
+              label: 'Monthly Target (₹4.50 Cr)',
+              data: [4.50, 4.50, 4.50, 4.50, 4.50, 4.50, 4.50, 4.50],
+              borderColor: '#b91c1c',
+              borderWidth: 1.5,
+              borderDash: [3, 3],
+              pointRadius: 0,
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#475569', font: { family: 'Inter', size: 12 } } },
+            tooltip: {
+              callbacks: {
+                label: c => `${c.dataset.label}: ₹${c.parsed.y} Cr`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { color: '#f1f5f9' }, ticks: { color: '#64748b' } },
+            y: { 
+              grid: { color: '#e2e8f0' }, 
+              ticks: { color: '#64748b', callback: v => '₹' + v + ' Cr' } 
+            }
+          }
+        }
+      });
+    }
+
+    // =========================================================================
+    // PREDICT — RISK TABLE (live from /api/v1/risk)
+    // =========================================================================
+    async function loadRiskData() {
+      if (_riskData) { renderRiskTable(_riskData); return; }
+      try {
+        _riskData = await apiFetch('/api/v1/risk');
+        renderRiskTable(_riskData);
+      } catch(e) {
+        showTableError('riskTableBody', 5, 'Could not load risk data: ' + e.message);
+      }
+    }
+
+    function renderRiskTable(data) {
+      const tbody = document.getElementById('riskTableBody');
+      if (!tbody) return;
+      if (!data || data.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:1rem;color:var(--text-light);">No risk records found.</td></tr>'; return; }
+
+      tbody.innerHTML = data.map(r => {
+        const score = parseFloat(r.risk_score) || 0;
+        const valClass = riskValClass(score);
+        const pillCls = riskPillClass(r.risk_level);
+        const label = riskLabel(r.risk_level);
+        const revAtRisk = parseFloat(r.revenue_at_risk) || 0;
+
+        // Parse SHAP top_reasons from JSON string
+        let reasons = [];
+        try { reasons = typeof r.top_reasons === 'string' ? JSON.parse(r.top_reasons) : (r.top_reasons || []); } catch {}
+        const reasonText = reasons.length > 0
+          ? reasons.map(x => `${x.feature.replace(/_/g,' ')} (impact: ${parseFloat(x.impact).toFixed(3)}, value: ${parseFloat(x.value).toFixed(1)})`).join(', ')
+          : 'No SHAP data available';
+
+        return `<tr>
+          <td><strong>${r.customer_id}</strong></td>
+          <td><strong class="${valClass}">${fmt(score, 1)}%</strong></td>
+          <td><span class="pill ${pillCls}"><span class="dot"></span>${label}</span></td>
+          <td>${fmtLakhs(revAtRisk)}</td>
+          <td><button class="btn btn-outline btn-sm" onclick="showAttributionModal('${r.customer_id}', '${fmt(score,1)}% (${label})', '${reasonText.replace(/'/g, "&#39;")}')">Why?</button></td>
+        </tr>`;
+      }).join('');
+    }
+
+    // =========================================================================
+    // PREDICT — ANOMALY CARDS (live from /api/v1/anomalies)
+    // =========================================================================
+    async function loadAnomalyData() {
+      if (_anomalyData) { renderAnomalyCards(_anomalyData); return; }
+      try {
+        _anomalyData = await apiFetch('/api/v1/anomalies');
+        renderAnomalyCards(_anomalyData);
+      } catch(e) {
+        const grid = document.getElementById('anomalyGrid');
+        if (grid) grid.innerHTML = `<div class="api-error">Could not load anomaly data: ${e.message}</div>`;
+      }
+    }
+
+    function renderAnomalyCards(data) {
+      const grid = document.getElementById('anomalyGrid');
+      const badge = document.getElementById('anomalyCount');
+      if (!grid) return;
+
+      if (!data || data.length === 0) {
+        grid.innerHTML = '<div style="color:var(--text-light);padding:1rem;">No anomalies detected in the last 7 days.</div>';
+        if (badge) badge.innerText = '0 Exceptions';
+        return;
+      }
+
+      if (badge) badge.innerText = `${data.length} Exception${data.length !== 1 ? 's' : ''} Detected`;
+
+      grid.innerHTML = data.map(a => {
+        const color = anomalyColor(a.anomaly_type, a.severity);
+        const typeLabel = a.anomaly_type === 'SPIKE' ? 'Demand Surge' : 'Sales Deficit';
+        const pct = a.expected_value > 0 ? Math.abs(((a.actual_value - a.expected_value) / a.expected_value) * 100).toFixed(0) : '—';
+        const dir = a.anomaly_type === 'SPIKE' ? 'above' : 'below';
+        return `<div style="background:var(--bg-subtle);padding:0.875rem;border-radius:6px;border:1px solid var(--border-main);">
+          <div style="display:flex;justify-content:space-between;margin-bottom:0.35rem;">
+            <span style="font-size:0.75rem;font-weight:700;color:${color};">${typeLabel} (${a.severity})</span>
+            <span class="code-tag">Z: ${a.z_score > 0 ? '+' : ''}${fmt(a.z_score,1)}</span>
+          </div>
+          <div style="font-size:0.825rem;color:var(--text-main);">
+            <strong>${a.entity_id}</strong> ${a.metric_name.toLowerCase().replace(/_/g,' ')} ${pct}% ${dir} baseline on ${formatDate(a.anomaly_date)}.
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    // =========================================================================
+    // PREDICT — NEXT PURCHASE TABLE (live from /api/v1/next-purchases)
+    // =========================================================================
+    async function loadNextPurchaseData() {
+      if (_nextPurchaseData) { renderNextPurchaseTable(_nextPurchaseData); return; }
+      try {
+        _nextPurchaseData = await apiFetch('/api/v1/next-purchases');
+        renderNextPurchaseTable(_nextPurchaseData);
+      } catch(e) {
+        showTableError('nextPurchaseTableBody', 5, 'Could not load purchase data: ' + e.message);
+      }
+    }
+
+    function renderNextPurchaseTable(data) {
+      const tbody = document.getElementById('nextPurchaseTableBody');
+      if (!tbody) return;
+      if (!data || data.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:1rem;color:var(--text-light);">No predictions available.</td></tr>'; return; }
+
+      tbody.innerHTML = data.map(p => {
+        const daysUntil = parseInt(p.days_until_next_purchase);
+        const isOverdue = daysUntil < 0;
+        const dateLabel = isOverdue
+          ? `<span style="font-weight:600;color:var(--danger);">${formatDate(p.expected_purchase_date)} (Overdue)</span>`
+          : `<span style="font-weight:600;color:var(--primary);">${formatDate(p.expected_purchase_date)}</span>`;
+        return `<tr>
+          <td><strong>${p.customer_id}</strong></td>
+          <td>${formatDate(p.as_of_date)} (${Math.abs(daysUntil)}d cycle)</td>
+          <td>${dateLabel}</td>
+          <td>${fmtLakhs(parseFloat(p.expected_purchase_value) * 100)}</td>
+          <td>${confidencePill(p.confidence_score)}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    // =========================================================================
+    // DECIDE — ACTION QUEUE (live from /api/v1/recommendations)
+    // =========================================================================
+    async function loadRecommendationsData() {
+      if (_recommendationsData) { renderActionQueue(_recommendationsData); return; }
+      try {
+        _recommendationsData = await apiFetch('/api/v1/recommendations');
+        renderActionQueue(_recommendationsData);
+      } catch(e) {
+        showTableError('actionQueueBody', 6, 'Could not load recommendations: ' + e.message);
+      }
+    }
+
+    function renderActionQueue(data) {
+      const tbody = document.getElementById('actionQueueBody');
+      if (!tbody) return;
+      if (!data || data.length === 0) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:1rem;color:var(--text-light);">No recommendations generated.</td></tr>'; return; }
+
+      tbody.innerHTML = data.map(rec => {
+        const safeAction = (rec.recommended_action || '').replace(/'/g, "&#39;");
+        const safeImpact = (rec.expected_impact || '').replace(/'/g, "&#39;");
+        const safeIssue = (rec.issue_description || rec.issue_code || '').replace(/'/g, "&#39;");
+        return `<tr style="cursor:pointer;" onclick="loadActionDetails('${rec.customer_id}', '${safeIssue}', '${safeImpact}', '${safeAction}', 'N/A')">
+          <td><strong>${rec.customer_id}</strong></td>
+          <td>${issuePill(rec.issue_code)}</td>
+          <td>${priorityPill(rec.priority)}</td>
+          <td style="font-size:0.8rem;color:var(--text-muted);">${rec.recommended_action || '—'}</td>
+          <td class="val-positive" style="font-weight:600;">${rec.expected_impact || '—'}</td>
+          <td><button class="btn btn-primary btn-sm">Inspect</button></td>
+        </tr>`;
+      }).join('');
+    }
+
+    // =========================================================================
+    // DECIDE — WHAT-IF SIMULATOR (calls /api/v1/simulate/forecast)
+    // =========================================================================
+    let _simDebounce = null;
+
+    function calculateSimulator() {
+      const rec    = parseFloat(document.getElementById('rngRecUplift')?.value || 17);
+      const upsell = parseFloat(document.getElementById('rngUpsell')?.value    || 14);
+      const unit   = parseFloat(document.getElementById('rngUnit')?.value      || 9);
+
+      document.getElementById('lblRecUplift').innerText = `+₹${rec.toFixed(1)} Lakhs`;
+      document.getElementById('lblUpsellVal').innerText = `+₹${upsell.toFixed(1)} Lakhs`;
+      document.getElementById('lblUnitVal').innerText   = `+₹${unit.toFixed(1)} Lakhs`;
+
+      // Debounce: wait 400ms after the user stops sliding before calling API
+      clearTimeout(_simDebounce);
+      _simDebounce = setTimeout(() => runSimulatorAPI(rec, upsell, unit), 400);
+    }
+
+    async function runSimulatorAPI(rec, upsell, unit) {
+      const totalLakhs = rec + upsell + unit;
+      const upliftPct  = totalLakhs > 0 ? (totalLakhs / 462) * 100 : 0; // 462L ≈ ₹4.62 Cr baseline
+
+      // Pick top at-risk customers from cached risk data (or fallback IDs)
+      const custIds = (_riskData || [])
+        .filter(r => parseFloat(r.risk_score) >= 50)
+        .slice(0, 5)
+        .map(r => r.customer_id);
+      const ids = custIds.length > 0 ? custIds : ['CUST_0001', 'CUST_0002', 'CUST_0003'];
+
+      // POST to the simulator
+      let result = null;
+      try {
+        const res = await fetch('/api/v1/simulate/forecast', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            scenario_name: 'Target Gap Scenario',
+            recovered_customer_ids: ids,
+            uplift_percentage: parseFloat(upliftPct.toFixed(1)),
+            horizon_months: 1
+          })
+        });
+        if (res.ok) result = await res.json();
+      } catch(e) { /* fallback to local math below */ }
+
+      const baseCr   = result ? result.total_baseline_sales / 100000 : 4.62;
+      const simCr    = result ? result.total_simulated_sales  / 100000 : (4.62 + totalLakhs / 100);
+      const targetCr = 5.00;
+
+      document.getElementById('simRevisedVal').innerText = `₹${simCr.toFixed(2)} Cr`;
+      const prob = Math.min(96, Math.round(68 + ((simCr - 4.62) / 0.38) * 19));
+      document.getElementById('simProbVal').innerText = `68% → ${prob}%`;
+
+      const box = document.getElementById('simStatusBox');
+      if (simCr >= targetCr) {
+        box.className = 'pill pill-success';
+        box.innerText = `Target Achieved (+₹${((simCr - targetCr) * 100).toFixed(1)}L Surplus)`;
+      } else {
+        box.className = 'pill pill-warning';
+        box.innerText = `Shortfall Remaining: ₹${((targetCr - simCr) * 100).toFixed(1)}L`;
+      }
+    }
+
+    // =========================================================================
+    // ACTION ENGINE DRAWER
+    // =========================================================================
+    function loadActionDetails(name, situation, riskRev, recommendation, successRate) {
+      document.getElementById('actCustName').innerText = name;
+      document.getElementById('actSituation').innerText = situation;
+      document.getElementById('actRevenueAtRisk').innerText = riskRev;
+      document.getElementById('actRecommendation').innerHTML = recommendation;
+      document.getElementById('actSuccessRate').innerText = successRate;
+      const panel = document.getElementById('actionPanel');
+      panel.classList.add('active');
+      panel.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // =========================================================================
+    // ATTRIBUTION MODAL (SHAP Why?)
+    // =========================================================================
+    function showAttributionModal(customer, score, factors) {
+      document.getElementById('mTitle').innerText = `${customer} — Risk Factors`;
+      document.getElementById('mRiskPill').innerText = score;
+      const parts = factors.split(',').map(p => `• ${p.trim()}`).join('<br>');
+      document.getElementById('mFactors').innerHTML = parts;
+      document.getElementById('attributionModal').classList.add('active');
+    }
+    function closeAttributionModal() {
+      document.getElementById('attributionModal').classList.remove('active');
+    }
+
+    // =========================================================================
+    // TOAST
+    // =========================================================================
+    function notifyToast(msg) {
+      const t = document.getElementById('toast');
+      t.innerText = msg;
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 3000);
+    }
+
+    // =========================================================================
+    // SYNC WAREHOUSE BUTTON (calls /health to verify API is live)
+    // =========================================================================
+    async function syncWarehouse() {
+      const el = document.getElementById('syncIndicator');
+      el.innerHTML = '<span class="loading-spinner"></span>Checking…';
+      try {
+        const data = await apiFetch('/health');
+        el.innerText = 'Sync Warehouse';
+        if (data.status === 'healthy') {
+          notifyToast('✓ API is healthy — warehouse connected');
+          // Bust caches so next tab visit re-fetches fresh data
+          _riskData = null; _anomalyData = null; _nextPurchaseData = null; _recommendationsData = null;
+        } else {
+          notifyToast('⚠ API responded but status is: ' + data.status);
+        }
+      } catch(e) {
+        el.innerText = 'Sync Warehouse';
+        notifyToast('✗ API unreachable — is the server running?');
+      }
+    }
+
+    // =========================================================================
+    // INITIALIZATION
+    // =========================================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      renderSeeCharts();
+    });
+  </script>
+</body>
+</html>
